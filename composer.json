@@ -1,0 +1,29 @@
+{
+    "name": "gobozzz/voice-assistant",
+    "description": "Голосовой ИИ ассистент для Laravel сайтов и API",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Gobozzz",
+            "email": "gobozovbogdan@gmail.com",
+            "homepage": "https://github.com/Gobozzz"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "php-ffmpeg/php-ffmpeg": "^1.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gobozzz\\VoiceAssistant\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Gobozzz\\VoiceAssistant\\Providers\\VoiceAssistantServiceProvider"
+            ]
+        }
+    }
+}
