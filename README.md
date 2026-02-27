@@ -160,6 +160,72 @@ rules_answer - правила ответа для ИИ ассистента
 Далее просто подмените класс в `config/voice-assistant.php` файле в ключе `voice-assistants.site.realization` на свой
 класс.
 
+Простой пример:
+
+```php
+<?php
+
+declare(strict_types=1);
+
+namespace App\VoiceAssistants;
+
+use App\Models\Product;
+use Gobozzz\VoiceAssistant\VoiceAssistants\BaseVoiceAssistant;
+
+final class MyCustomSiteVoiceAssistant extends BaseVoiceAssistant
+{
+    protected function getSystemPrompt(): string
+    {
+        $urlSite = config('voice-assistant.voice-assistants.site.url_site', '');
+        $aboutCompany = config('voice-assistant.voice-assistants.site.about_company', '');
+        $linksPages = '';
+        foreach (config('voice-assistant.voice-assistants.site.links_pages', '') as $linksPage) {
+            $linksPages .= '- ' . $linksPage['title'] . ': ' . $urlSite . $linksPage['link'] . "\n";
+        }
+        $contacts = '';
+        foreach (config('voice-assistant.voice-assistants.site.contacts', '') as $contact) {
+            $contacts .= '- ' . $contact['title'] . ': ' . $contact['link'] . "\n";
+        }
+        $nameAssistant = config('voice-assistant.voice-assistants.site.name');
+        $rulesAnswer = config('voice-assistant.voice-assistants.site.rules_answer');
+        $partingWords = config('voice-assistant.voice-assistants.site.parting_words');
+        $info = config('voice-assistant.voice-assistants.site.info');
+
+        $products = Product::all(); // ваш запрос в БД
+        $productsPrompt = ""; // формируйте в виде строки и отдайте в промпт
+
+        foreach ($products as $product) {
+            $productsPrompt .= $product->name . ":" . $product->price . " руб. \n";
+        }
+
+
+        return <<<PROMPT
+Ты — ассистент сайта $urlSite.
+Тебя зовут $nameAssistant.
+$partingWords
+
+Справочная информация для тебя:
+$info
+
+О компании:
+$aboutCompany
+
+Справочные ссылки по сайту:
+$linksPages
+
+Контакты:
+$contacts
+
+Наша продукция:
+$productsPrompt
+
+Правила ответа:
+$rulesAnswer
+PROMPT;
+    }
+}
+```
+
 ## Куда сохраняются голосовые ответы от ИИ?
 
 Ответы от ИИ сохраняются на диск указанный в `config/voice-assistant.php`, изначально это `public` диск, но
